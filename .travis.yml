@@ -14,7 +14,8 @@ addons:
       - libiberty-dev
 
 rust:
-  - stable
+  # stable is unsupport 2018 edition
+  # - stable
   - beta
   - nightly
 
