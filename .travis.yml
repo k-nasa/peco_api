@@ -24,13 +24,13 @@ before_script:
   - rustup component add clippy-preview
   - rustup component add rustfmt-preview
   - cargo install cargo-travis || echo "cargo-travis already installed"
-  - cargo clean
 
 script:
   - cargo clippy --all-targets --all-features -- -D warnings
-  - cargo test
   - cargo fmt
   - cargo build
+  - cargo clean
+  - cargo test
 
 after_success: |
   wget https://github.com/SimonKagstrom/kcov/archive/master.tar.gz &&
