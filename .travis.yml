@@ -1,0 +1,36 @@
+language: rust
+dist: trusty
+sudo: required
+
+cache: cargo
+
+matrix:
+  allow_failures:
+    - rust: nightly
+
+addons:
+  apt:
+    packages:
+      - libcurl4-openssl-dev
+      - libelf-dev
+      - libdw-dev
+      - binutils-dev
+      - libiberty-dev
+
+rust:
+  - nightly
+
+before_script:
+  - rustup component add clippy-preview
+  - rustup component add rustfmt-preview
+  - cargo install cargo-travis || echo "cargo-travis already installed"
+
+script:
+  - cargo clippy --all-targets --all-features -- -D warnings
+  - cargo fmt
+  - cargo build
+  - cargo test
+
+after_success:
+  - cargo coveralls
+  - cargo doc-upload
