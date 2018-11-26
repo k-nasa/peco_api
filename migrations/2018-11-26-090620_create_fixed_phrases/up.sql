@@ -1,7 +1,7 @@
 -- Your SQL goes here
-CREATE TABLE fixed_phrases (
-  id SERIAL NOT NULL PRIMARY KEY,
-  user_id INTEGER REFERENCES users(id) NOT NULL,
-  yes_text TEXT NOT NULL default '必要なり',
-  no_text TEXT NOT NULL default '不要なり'
+create table fixed_phrases (
+  id serial not null primary key,
+  user_id integer references users(id) not null,
+  yes_text text not null default '必要なり',
+  no_text text not null default '不要なり'
 )

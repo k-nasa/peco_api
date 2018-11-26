@@ -1,7 +1,7 @@
 -- Your SQL goes here
-CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  token VARCHAR NOT NULL UNIQUE,
-  user_id INTEGER NOT NULL UNIQUE,
-  password_digest VARCHAR NOT NULL
+create table users (
+  id serial primary key,
+  token varchar not null unique,
+  user_id integer not null unique,
+  password_digest varchar not null
 )
