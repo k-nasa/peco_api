@@ -5,13 +5,9 @@ extern crate rocket;
 
 use crate::rocket::Rocket;
 
-#[get("/")]
-fn hello() -> &'static str {
-    "Hello, world!"
-}
 
 fn rocket() -> Rocket {
-    rocket::ignite().mount("/", routes![hello])
+    rocket::ignite().mount("/", routes![])
 }
 
 fn main() {
@@ -21,14 +17,6 @@ fn main() {
 #[cfg(test)]
 mod test {
     use super::rocket;
-    use rocket::http::Status;
+    use rocket::http::{ContentType, Status};
     use rocket::local::Client;
-
-    #[test]
-    fn hello_world() {
-        let client = Client::new(rocket()).expect("valid rocket instance");
-        let mut response = client.get("/").dispatch();
-        assert_eq!(response.status(), Status::Ok);
-        assert_eq!(response.body_string(), Some("Hello, world!".into()));
-    }
 }
