@@ -28,7 +28,7 @@ mod test {
             .header(ContentType::JSON)
             .body(
                 r#"{
-                  "user_id": "test_user",
+                  "username": "test_user",
                   "password": "password",
                   "password_confirmation": "password"
                   }"#,
