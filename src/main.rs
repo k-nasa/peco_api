@@ -43,6 +43,33 @@ impl From<BcryptError> for AuthenticationError {
     }
 }
 
+#[derive(Queryable, Debug, PartialEq)]
+struct User {
+    pub id: i32,
+    pub username: String,
+    pub token: String,
+}
+
+impl User {
+    pub fn create_user(
+        conn: &PgConnection,
+        username: &str,
+        password: &str,
+    ) -> Result<User, AuthenticationError> {
+        let hashed_password = hash(password, DEFAULT_COST)?;
+        let token = hash(username, DEFAULT_COST)?;
+
+        diesel::insert_into(users::table)
+            .values((
+                users::username.eq(username),
+                users::password_digest.eq(hashed_password),
+                users::token.eq(token),
+            ))
+            .returning((users::id, users::username, users::token))
+            .get_result(conn)
+            .map_err(AuthenticationError::DatabaseError)
+    }
+}
 
 fn rocket() -> Rocket {
     rocket::ignite().mount("/", routes![])
