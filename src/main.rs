@@ -20,6 +20,14 @@ use std::env;
 
 use self::schema::*;
 
+fn establish_connection() -> PgConnection {
+    dotenv().expect("faild load dotenv");
+
+    let databese_url = env::var("DATABASE_URL").expect("DATABASE_URL mut be set");
+
+    PgConnection::establish(&databese_url).expect(&format!("Error connecting to {}", databese_url))
+}
+
 
 fn rocket() -> Rocket {
     rocket::ignite().mount("/", routes![])
