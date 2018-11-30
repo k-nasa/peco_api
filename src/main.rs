@@ -1,9 +1,24 @@
 #![feature(proc_macro_hygiene, decl_macro)]
 
+pub mod schema;
+
+#[macro_use]
+extern crate serde_derive;
 #[macro_use]
 extern crate rocket;
+#[macro_use]
+extern crate rocket_contrib;
+#[macro_use]
+extern crate diesel;
 
+use crate::diesel::{pg::PgConnection, prelude::*, Queryable};
 use crate::rocket::Rocket;
+use crate::rocket_contrib::json::{Json, JsonValue};
+use bcrypt::*;
+use dotenv::*;
+use std::env;
+
+use self::schema::*;
 
 
 fn rocket() -> Rocket {
