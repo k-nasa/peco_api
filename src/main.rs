@@ -28,6 +28,21 @@ fn establish_connection() -> PgConnection {
     PgConnection::establish(&databese_url).expect(&format!("Error connecting to {}", databese_url))
 }
 
+#[derive(Debug)]
+pub enum AuthenticationError {
+    IncorrectPassword,
+    NoUsernameSet,
+    NoPasswordSet,
+    BcryptError(BcryptError),
+    DatabaseError(diesel::result::Error),
+}
+
+impl From<BcryptError> for AuthenticationError {
+    fn from(e: BcryptError) -> Self {
+        AuthenticationError::BcryptError(e)
+    }
+}
+
 
 fn rocket() -> Rocket {
     rocket::ignite().mount("/", routes![])
