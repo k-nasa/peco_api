@@ -28,6 +28,23 @@ fn establish_connection() -> PgConnection {
     PgConnection::establish(&databese_url).expect(&format!("Error connecting to {}", databese_url))
 }
 
+#[derive(Serialize, Deserialize)]
+struct RequestUser {
+    username: String,
+    password: String,
+    password_confirmation: String,
+}
+
+#[post("/users", format = "application/json", data = "<user>")]
+fn post_users(user: Json<RequestUser>) -> JsonValue {
+    let connection = establish_connection();
+
+    // TODO validation and error handle
+    let result_user = User::create_user(&connection, &user.username, &user.password).unwrap();
+
+    json!({ "token": result_user.token })
+}
+
 #[derive(Debug)]
 pub enum AuthenticationError {
     IncorrectPassword,
@@ -72,7 +89,7 @@ impl User {
 }
 
 fn rocket() -> Rocket {
-    rocket::ignite().mount("/", routes![])
+    rocket::ignite().mount("/", routes![post_users])
 }
 
 fn main() {
