@@ -1,13 +1,5 @@
-#![feature(proc_macro_hygiene, decl_macro)]
-
 extern crate peco_api;
-use rocket::{routes, Rocket};
-
-use peco_api::actions::*;
-
-fn rocket() -> Rocket {
-    rocket::ignite().mount("/", routes![post_users])
-}
+use peco_api::rocket;
 
 fn main() {
     rocket().launch();

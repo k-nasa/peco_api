@@ -12,3 +12,10 @@ extern crate diesel;
 pub mod actions;
 pub mod models;
 pub mod schema;
+
+use self::actions::*;
+use crate::rocket::Rocket;
+
+pub fn rocket() -> Rocket {
+    rocket::ignite().mount("/", routes![post_users])
+}

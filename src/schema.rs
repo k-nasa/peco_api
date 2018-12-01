@@ -27,8 +27,4 @@ table! {
 joinable!(fixed_phrases -> users (user_id));
 joinable!(send_emails -> users (user_id));
 
-allow_tables_to_appear_in_same_query!(
-    fixed_phrases,
-    send_emails,
-    users,
-);
+allow_tables_to_appear_in_same_query!(fixed_phrases, send_emails, users,);
