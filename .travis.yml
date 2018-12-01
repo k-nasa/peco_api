@@ -14,11 +14,16 @@ addons:
 rust:
   - nightly
 
+services:
+  - postgresql
+
 before_script:
   - rustup component add clippy-preview
   - rustup component add rustfmt-preview
   - cargo install diesel_cli
   - cargo install cargo-travis || echo "cargo-travis already installed"
+  - psql -c 'create database travis_ci_test;' -U postgres
+  - cp config/database.yml.travis config/database.yml
 
 script:
   - cargo fmt
