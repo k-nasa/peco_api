@@ -7,7 +7,6 @@ cache: cargo
 matrix:
   allow_failures:
     - rust: nightly
-
 addons:
   apt:
     packages:
@@ -20,14 +19,22 @@ addons:
 rust:
   - nightly
 
+services:
+  - postgresql
+
 before_script:
   - rustup component add clippy-preview
   - rustup component add rustfmt-preview
+  - cargo install diesel_cli || echo 'diesel_cli already installed'
   - cargo install cargo-travis || echo "cargo-travis already installed"
+  - psql -c 'create database peco_test;' -U postgres
+  - echo DATABASE_URL=postgres://postgres@localhost/peco_test> .env
+  - cp config/database.yml.travis config/database.yml
 
 script:
-  - cargo clippy --all-targets --all-features -- -D warnings
   - cargo fmt
+  - cargo clippy --all-targets --all-features -- -D warnings
+  - diesel migration run
   - cargo build
   - cargo test
 
