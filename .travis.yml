@@ -23,12 +23,13 @@ rust:
 before_script:
   - rustup component add clippy-preview
   - rustup component add rustfmt-preview
+  - cargo install diesel_cil
   - cargo install cargo-travis || echo "cargo-travis already installed"
 
 script:
-  - cargo clippy --all-targets --all-features -- -D warnings
   - cargo fmt
-  - cargo build
+  - cargo clippy --all-targets --all-features -- -D warnings
+  - diesel migration run
   - cargo test
 
 after_success:
