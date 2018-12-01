@@ -9,7 +9,8 @@ pub fn establish_connection() -> PgConnection {
 
     let databese_url = env::var("DATABASE_URL").expect("DATABASE_URL mut be set");
 
-    PgConnection::establish(&databese_url).expect(&format!("Error connecting to {}", databese_url))
+    PgConnection::establish(&databese_url)
+        .unwrap_or_else(|_| panic!("Error connecting to {}", databese_url))
 }
 
 #[derive(Serialize, Deserialize)]
