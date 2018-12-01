@@ -2,8 +2,6 @@ language: rust
 dist: trusty
 sudo: required
 
-cache: cargo
-
 addons:
   apt:
     packages:
