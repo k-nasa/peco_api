@@ -40,3 +40,111 @@ pub fn post_users(user: Json<RequestUser>) -> status::Custom<JsonValue> {
 
     status::Custom(Status::Ok, json!({ "token": result_user.token }))
 }
+
+#[cfg(test)]
+mod test {
+    use crate::rocket;
+    use crate::rocket::http::{ContentType, Status};
+    use crate::rocket::local::Client;
+    use std::time::SystemTime;
+
+    #[test]
+    fn post_users() {
+        let client = Client::new(rocket()).expect("valid rocket instance");
+        let now = format!("{:?}", SystemTime::now());
+
+        let mut response = client
+            .post("/users")
+            .header(ContentType::JSON)
+            .body(format!(
+                r#"{{
+                  "username": "test_user{}",
+                  "password": "password",
+                  "password_confirmation": "password"
+                  }}"#,
+                now,
+            ))
+            .dispatch();
+
+        assert_eq!(response.status(), Status::Ok);
+        assert_eq!(response.content_type().unwrap(), ContentType::JSON);
+        assert!(response.body_string().unwrap().contains(r#"{"token":"#))
+    }
+
+    #[test]
+    fn post_users_when_invalid_password() {
+        let client = Client::new(rocket()).expect("valid rocket instance");
+        let now = format!("{:?}", SystemTime::now());
+
+        let mut response = client
+            .post("/users")
+            .header(ContentType::JSON)
+            .body(format!(
+                r#"{{
+                  "username": "test_user{}",
+                  "password": "password1",
+                  "password_confirmation": "password2"
+                  }}"#,
+                now,
+            ))
+            .dispatch();
+
+        assert_eq!(response.status(), Status::BadRequest);
+        assert_eq!(response.content_type().unwrap(), ContentType::JSON);
+        assert!(response
+            .body_string()
+            .unwrap()
+            .contains(r#"{"error":"IncorrectPassword""#))
+    }
+
+    #[test]
+    fn post_users_when_empty_username() {
+        let client = Client::new(rocket()).expect("valid rocket instance");
+        let now = format!("{:?}", SystemTime::now());
+
+        let mut response = client
+            .post("/users")
+            .header(ContentType::JSON)
+            .body(format!(
+                r#"{{
+                  "username": "",
+                  "password": "password",
+                  "password_confirmation": "password"
+                  }}"#
+            ))
+            .dispatch();
+
+        assert_eq!(response.status(), Status::BadRequest);
+        assert_eq!(response.content_type().unwrap(), ContentType::JSON);
+        assert!(response
+            .body_string()
+            .unwrap()
+            .contains(r#"{"error":"NoUsernameSet""#))
+    }
+
+    #[test]
+    fn post_users_when_empty_password() {
+        let client = Client::new(rocket()).expect("valid rocket instance");
+        let now = format!("{:?}", SystemTime::now());
+
+        let mut response = client
+            .post("/users")
+            .header(ContentType::JSON)
+            .body(format!(
+                r#"{{
+                  "username": "test_user{}",
+                  "password": "",
+                  "password_confirmation": "password2"
+                  }}"#,
+                now,
+            ))
+            .dispatch();
+
+        assert_eq!(response.status(), Status::BadRequest);
+        assert_eq!(response.content_type().unwrap(), ContentType::JSON);
+        assert!(response
+            .body_string()
+            .unwrap()
+            .contains(r#"{"error":"NoPasswordSet""#))
+    }
+}
