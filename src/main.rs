@@ -54,4 +54,27 @@ mod test {
         assert_eq!(response.content_type().unwrap(), ContentType::JSON);
         assert!(response.body_string().unwrap().contains(r#"{"token":"#))
     }
+
+    #[test]
+    fn post_users_when_invalid_password() {
+        let client = Client::new(rocket()).expect("valid rocket instance");
+        let now = format!("{:?}", SystemTime::now());
+
+        let mut response = client
+            .post("/users")
+            .header(ContentType::JSON)
+            .body(format!(
+                r#"{{
+                  "username": "test_user{}",
+                  "password": "password1",
+                  "password_confirmation": "password2"
+                  }}"#,
+                now,
+            ))
+            .dispatch();
+
+        assert_eq!(response.status(), Status::BadRequest);
+        assert_eq!(response.content_type().unwrap(), ContentType::JSON);
+        assert!(response.body_string().unwrap().contains(r#"{"error":"#))
+    }
 }
