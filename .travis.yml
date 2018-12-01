@@ -32,6 +32,7 @@ script:
   - cargo fmt
   - cargo clippy --all-targets --all-features -- -D warnings
   - diesel migration run
+  - cargo build
   - cargo test
 
 after_success:
