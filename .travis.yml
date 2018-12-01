@@ -24,7 +24,8 @@ before_script:
   - rustup component add rustfmt-preview
   - cargo install diesel_cli
   - cargo install cargo-travis || echo "cargo-travis already installed"
-  - psql -c 'create database travis_ci_test;' -U postgres
+  - psql -c 'create database peco_test;' -U postgres
+  - echo DATABASE_URL=postgres://postgres@localhost/peco_test> .env
   - cp config/database.yml.travis config/database.yml
 
 script:
