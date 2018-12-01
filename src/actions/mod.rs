@@ -1,5 +1,6 @@
 use super::models::user::*;
 use crate::diesel::{pg::PgConnection, prelude::*};
+use crate::rocket::{http::Status, response::*};
 use crate::rocket_contrib::json::{Json, JsonValue};
 use dotenv::*;
 use std::env;
@@ -21,11 +22,21 @@ pub struct RequestUser {
 }
 
 #[post("/users", format = "application/json", data = "<user>")]
-pub fn post_users(user: Json<RequestUser>) -> JsonValue {
+pub fn post_users(user: Json<RequestUser>) -> status::Custom<JsonValue> {
     let connection = establish_connection();
 
     // TODO validation and error handle
-    let result_user = User::create_user(&connection, &user.username, &user.password).unwrap();
+    let result_user = match User::create_user(
+        &connection,
+        &user.username,
+        &user.password,
+        &user.password_confirmation,
+    ) {
+        Ok(user) => user,
+        Err(e) => {
+            return status::Custom(Status::BadRequest, json!({ "error": e.to_string() }));
+        }
+    };
 
-    json!({ "token": result_user.token })
+    status::Custom(Status::Ok, json!({ "token": result_user.token }))
 }
