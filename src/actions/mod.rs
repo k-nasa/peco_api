@@ -25,7 +25,6 @@ pub struct RequestUser {
 pub fn post_users(user: Json<RequestUser>) -> status::Custom<JsonValue> {
     let connection = establish_connection();
 
-    // TODO validation and error handle
     let result_user = match User::create_user(
         &connection,
         &user.username,
@@ -47,6 +46,7 @@ pub struct RequestGetToken {
     password: String,
 }
 
+// FIXME postでいいんけ？
 #[post("/user_token", format = "application/json", data = "<user>")]
 pub fn get_user_token(user: Json<RequestGetToken>) -> status::Custom<JsonValue> {
     let connection = establish_connection();
