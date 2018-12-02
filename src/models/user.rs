@@ -55,11 +55,16 @@ impl User {
 
         diesel::insert_into(users::table)
             .values((
+                users::token.eq(token),
                 users::username.eq(username),
                 users::password_digest.eq(hashed_password),
-                users::token.eq(token),
             ))
-            .returning((users::id, users::username, users::token))
+            .returning((
+                users::id,
+                users::token,
+                users::username,
+                users::password_digest,
+            ))
             .get_result(conn)
             .map_err(AuthenticationError::DatabaseError)
     }
