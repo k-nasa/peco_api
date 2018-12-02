@@ -18,7 +18,7 @@ use self::actions::*;
 use crate::rocket::Rocket;
 
 pub fn rocket() -> Rocket {
-    rocket::ignite().mount("/", routes![post_users])
+    rocket::ignite().mount("/", routes![post_users, get_user_token])
 }
 
 fn main() {

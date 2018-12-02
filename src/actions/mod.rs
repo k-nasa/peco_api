@@ -41,6 +41,30 @@ pub fn post_users(user: Json<RequestUser>) -> status::Custom<JsonValue> {
     status::Custom(Status::Ok, json!({ "token": result_user.token }))
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct RequestGetToken {
+    username: String,
+    password: String,
+}
+
+#[post("/user_token", format = "application/json", data = "<user>")]
+pub fn get_user_token(user: Json<RequestGetToken>) -> status::Custom<JsonValue> {
+    let connection = establish_connection();
+
+    let token = match User::get_token(&connection, &user.username, &user.password) {
+        Some(token) => token,
+        None => {
+            println!("test");
+            return status::Custom(
+                Status::BadRequest,
+                json!({ "message": "invalid username or password" }),
+            );
+        }
+    };
+
+    status::Custom(Status::Ok, json!({ "token": token }))
+}
+
 #[cfg(test)]
 mod test {
     use crate::rocket;
