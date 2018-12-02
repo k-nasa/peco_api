@@ -1,5 +1,5 @@
 use super::super::schema::*;
-use crate::diesel::{pg::PgConnection, prelude::*};
+use crate::diesel::{dsl::sql, pg::PgConnection, prelude::*};
 use bcrypt::*;
 
 #[derive(Debug)]
@@ -26,8 +26,9 @@ impl ToString for AuthenticationError {
 #[derive(Queryable, Debug, PartialEq)]
 pub struct User {
     pub id: i32,
-    pub username: String,
     pub token: String,
+    pub username: String,
+    pub password_digest: String,
 }
 
 impl User {
@@ -54,12 +55,38 @@ impl User {
 
         diesel::insert_into(users::table)
             .values((
+                users::token.eq(token),
                 users::username.eq(username),
                 users::password_digest.eq(hashed_password),
-                users::token.eq(token),
             ))
-            .returning((users::id, users::username, users::token))
+            .returning((
+                users::id,
+                users::token,
+                users::username,
+                users::password_digest,
+            ))
             .get_result(conn)
             .map_err(AuthenticationError::DatabaseError)
+    }
+
+    pub fn get_token(conn: &PgConnection, username: &str, password: &str) -> Option<String> {
+        let user = users::table
+            .filter(users::username.eq(username))
+            .limit(1)
+            .load::<User>(conn)
+            .expect("Error loading users");
+
+        if user.is_empty() {
+            return None;
+        }
+
+        let user = user.first().unwrap();
+        if !verify(password, &user.password_digest).unwrap() {
+            return None;
+        }
+
+        let token = user.token.clone();
+
+        Some(token)
     }
 }
