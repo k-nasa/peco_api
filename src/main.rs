@@ -14,7 +14,7 @@ pub mod actions;
 pub mod models;
 pub mod schema;
 
-use self::actions::*;
+use self::actions::user::*;
 use crate::rocket::Rocket;
 
 pub fn rocket() -> Rocket {

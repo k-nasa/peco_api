@@ -1,5 +1,5 @@
 use super::super::schema::*;
-use crate::diesel::{dsl::sql, pg::PgConnection, prelude::*};
+use crate::diesel::{pg::PgConnection, prelude::*};
 use bcrypt::*;
 
 #[derive(Debug)]
