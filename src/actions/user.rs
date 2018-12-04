@@ -58,8 +58,8 @@ pub fn get_user_token(user: Json<RequestGetToken>) -> status::Custom<JsonValue> 
 
 #[cfg(test)]
 mod test {
-    use super::super::super::models::user::*;
-    use super::super::establish_connection;
+    use crate::actions::establish_connection;
+    use crate::models::user::*;
     use crate::rocket;
     use crate::rocket::http::{ContentType, Status};
     use crate::rocket::local::Client;
