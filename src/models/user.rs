@@ -99,4 +99,20 @@ impl User {
             Err(e) => println!("faild create_initial_fixed_phrases: {}", e),
         }
     }
+
+    pub fn find_by_token(conn: &PgConnection, token: &str) -> Option<User> {
+        let user = users::table
+            .filter(users::token.eq(token))
+            .limit(1)
+            .load::<User>(conn)
+            .expect("Error loading users");
+
+        if user.is_empty() {
+            return None;
+        }
+
+        let user = user.first().unwrap();
+
+        Some(*user)
+    }
 }
