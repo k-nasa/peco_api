@@ -23,7 +23,7 @@ impl ToString for AuthenticationError {
     }
 }
 
-#[derive(Queryable, Debug, PartialEq)]
+#[derive(Clone, Queryable, Debug, PartialEq)]
 pub struct User {
     pub id: i32,
     pub token: String,
@@ -113,6 +113,6 @@ impl User {
 
         let user = user.first().unwrap();
 
-        Some(*user)
+        Some(user.clone())
     }
 }
