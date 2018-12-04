@@ -37,6 +37,8 @@ pub fn post_users(user: Json<RequestUser>) -> status::Custom<JsonValue> {
         }
     };
 
+    result_user.create_initial_fixed_phrases(&connection);
+
     status::Custom(Status::Ok, json!({ "token": result_user.token }))
 }
 

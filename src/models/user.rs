@@ -89,4 +89,14 @@ impl User {
 
         Some(token)
     }
+
+    pub fn create_initial_fixed_phrases(&self, conn: &PgConnection) {
+        match diesel::insert_into(fixed_phrases::table)
+            .values(fixed_phrases::user_id.eq(self.id))
+            .execute(conn)
+        {
+            Ok(_) => (),
+            Err(e) => println!("faild create_initial_fixed_phrases: {}", e),
+        }
+    }
 }
