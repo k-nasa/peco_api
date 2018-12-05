@@ -14,11 +14,11 @@ pub mod actions;
 pub mod models;
 pub mod schema;
 
-use self::actions::*;
+use self::actions::{fixed_phras::*, user::*};
 use crate::rocket::Rocket;
 
 pub fn rocket() -> Rocket {
-    rocket::ignite().mount("/", routes![post_users, get_user_token])
+    rocket::ignite().mount("/", routes![post_users, get_user_token, update_fixed_phras])
 }
 
 fn main() {

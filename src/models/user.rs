@@ -1,5 +1,5 @@
 use super::super::schema::*;
-use crate::diesel::{dsl::sql, pg::PgConnection, prelude::*};
+use crate::diesel::{pg::PgConnection, prelude::*};
 use bcrypt::*;
 
 #[derive(Debug)]
@@ -23,7 +23,7 @@ impl ToString for AuthenticationError {
     }
 }
 
-#[derive(Queryable, Debug, PartialEq)]
+#[derive(Clone, Queryable, Debug, PartialEq)]
 pub struct User {
     pub id: i32,
     pub token: String,
@@ -88,5 +88,31 @@ impl User {
         let token = user.token.clone();
 
         Some(token)
+    }
+
+    pub fn create_initial_fixed_phrases(&self, conn: &PgConnection) {
+        match diesel::insert_into(fixed_phrases::table)
+            .values(fixed_phrases::user_id.eq(self.id))
+            .execute(conn)
+        {
+            Ok(_) => (),
+            Err(e) => println!("faild create_initial_fixed_phrases: {}", e),
+        }
+    }
+
+    pub fn find_by_token(conn: &PgConnection, token: &str) -> Option<User> {
+        let user = users::table
+            .filter(users::token.eq(token))
+            .limit(1)
+            .load::<User>(conn)
+            .expect("Error loading users");
+
+        if user.is_empty() {
+            return None;
+        }
+
+        let user = user.first().unwrap();
+
+        Some(user.clone())
     }
 }
