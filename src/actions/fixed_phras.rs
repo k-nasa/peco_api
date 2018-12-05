@@ -45,6 +45,7 @@ pub fn update_fixed_phras(params: Json<RequestUpdateFixedPhras>) -> status::Cust
 
 #[cfg(test)]
 mod tests {
+    #![allow(unused_must_use)]
     use crate::actions::*;
     use crate::models::{fixed_phras::*, user::*};
     use crate::rocket;
