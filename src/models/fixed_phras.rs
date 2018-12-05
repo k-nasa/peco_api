@@ -10,7 +10,7 @@ pub struct FixedPhras {
 }
 
 impl FixedPhras {
-    pub fn find_by_user_id(conn: &PgConnection, user_id: &i32) -> Option<FixedPhras> {
+    pub fn find_by_user_id(conn: &PgConnection, user_id: i32) -> Option<FixedPhras> {
         let fixed_phras = fixed_phrases::table
             .filter(fixed_phrases::user_id.eq(user_id))
             .limit(1)

@@ -19,7 +19,7 @@ pub fn update_fixed_phras(params: Json<RequestUpdateFixedPhras>) -> status::Cust
         None => return status::Custom(Status::BadRequest, json!({"message": "invalid token" })),
     };
 
-    let fixed_phras = match FixedPhras::find_by_user_id(&connection, &user.id) {
+    let fixed_phras = match FixedPhras::find_by_user_id(&connection, user.id) {
         Some(f) => f,
         None => {
             return status::Custom(
@@ -63,7 +63,7 @@ mod tests {
         let user = User::find_by_token(&connection, &token).unwrap();
         user.create_initial_fixed_phrases(&connection);
 
-        let fixed_phras = FixedPhras::find_by_user_id(&connection, &user.id).unwrap();
+        let fixed_phras = FixedPhras::find_by_user_id(&connection, user.id).unwrap();
 
         assert_eq!(fixed_phras.yes_text, "必要なり".to_string());
         assert_eq!(fixed_phras.no_text, "不要なり".to_string());
@@ -88,7 +88,7 @@ mod tests {
             .unwrap()
             .contains(r#""message":"更新しました""#));
 
-        let fixed_phras = FixedPhras::find_by_user_id(&connection, &user.id).unwrap();
+        let fixed_phras = FixedPhras::find_by_user_id(&connection, user.id).unwrap();
         assert_eq!(fixed_phras.yes_text, "yes".to_string());
         assert_eq!(fixed_phras.no_text, "no".to_string());
     }
