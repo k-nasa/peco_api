@@ -58,6 +58,7 @@ pub fn get_user_token(user: Json<RequestGetToken>) -> status::Custom<JsonValue> 
 
 #[cfg(test)]
 mod test {
+    #![allow(unused_must_use)]
     use crate::actions::establish_connection;
     use crate::models::user::*;
     use crate::rocket;
@@ -100,7 +101,7 @@ mod test {
                 r#"{{
                   "username": "test_user{}",
                   "password": "password1",
-                  "password_confirmation": "password2"
+                  password_confirmation": "password2"
                   }}"#,
                 now,
             ))
@@ -121,13 +122,13 @@ mod test {
         let mut response = client
             .post("/users")
             .header(ContentType::JSON)
-            .body(format!(
-                r#"{{
+            .body(
+                r#"{
                   "username": "",
                   "password": "password",
                   "password_confirmation": "password"
-                  }}"#
-            ))
+                  }"#,
+            )
             .dispatch();
 
         assert_eq!(response.status(), Status::BadRequest);
@@ -173,12 +174,12 @@ mod test {
         let mut response = client
             .post("/user_token")
             .header(ContentType::JSON)
-            .body(format!(
-                r#"{{
+            .body(
+                r#"{
                   "username": "test_user",
                   "password": "password"
-                  }}"#,
-            ))
+                  }"#,
+            )
             .dispatch();
 
         assert_eq!(response.status(), Status::Ok);
@@ -194,12 +195,12 @@ mod test {
         let mut response = client
             .post("/user_token")
             .header(ContentType::JSON)
-            .body(format!(
-                r#"{{
+            .body(
+                r#"{
                   "username": "test_user",
                   "password": "passwordddd"
-                  }}"#,
-            ))
+                  }"#,
+            )
             .dispatch();
 
         assert_eq!(response.status(), Status::BadRequest);
