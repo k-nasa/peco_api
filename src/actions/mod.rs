@@ -1,4 +1,5 @@
 pub mod fixed_phras;
+pub mod send_email;
 pub mod user;
 
 use crate::diesel::{pg::PgConnection, prelude::*};
